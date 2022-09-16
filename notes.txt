@@ -171,3 +171,16 @@ which method is better?
     but that could lead to unintended consequences. Since the tests affect Player object's
     property values (ex. reducing health), then using the same object every time means
     we won't be testing properties and methods in isolation anymore
+
+10.4
+an example of where arrow function is necessary: if the callback in `.initializeGame()` was:
+
+            .then(function({ name }) {
+            this.player = new Player(name);
+
+            // test the object creation
+            console.log(this.currentEnemy, this.player);
+            });
+
+then function keyword would creaet a new lexical scope, and `.this` would no longer reference
+`Game` object. Therefore use arrow functions for all inquirer callbacks in this project!
