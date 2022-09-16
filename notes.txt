@@ -1,0 +1,173 @@
+Module 10
+
+OOP
+
+Test Driven Development (TDD) pattern dictates:
+- test code to fail, then write enough code to pass, refactor code
+- purpose of writing tests for code:
+    - allows code to be modularized
+    - follows DRY
+    - ensures pieces of code are working as intended
+
+10.1
+- after creating repo and the readme, create package.json by running `npm init`
+- then create app.js and .gitignore
+    - add node_modules/ and .DS_Store
+- install jest (testing framework)
+    `npm install jest --save-dev`
+        --save-dev tells npm to add Jest to devDependencies
+    then open package.json, change scripts property 'test' value => 'jest'
+    - create `__tests__`  folder, then create folder random.test.json
+        __ because jest is looking for __ in the folder name
+        *.test.js because jest expects this to be at the end of the filename
+
+    then anytime running a test, run `npm run test`
+
+- `new` keyword
+
+- tests should be general so we don't need to run the test multiple times to ensure it works
+- constructor functions act like blueprints for objects (a constructor is a function that
+    creates an instance of a class which is typically called an object))
+        - don't have return statement, so they return undefined by default
+        - unlike a regular function, they are meant to be used with the `new` keyword
+    - for constructor functions, naming convention dictates first letter should be capitalized
+        (vs variables in whcih first letter is lowercase and uses camel-hump naming convention)
+
+/////////////////////////////////////////////
+        function Car(make, model) {
+        this.make = make;
+        this.model = model;
+        }
+/////////////////////////////////////////////
+Car() is now a constructor
+by removing the `this.` lines, if we `new Call()` it would essentially create an empty object
+
+        const car = new Car('Honda', 'Civic')
+        console.log(Car); ==> Car { make: 'Honda', model: 'Civic' }
+
+note: variable name is lowercase, constructor name is uppercase
+
+10.2
+mocking/faking data is important
+- constructors will have multiple dependencies not related to the functionality being tested,
+    so using mock data for these dependencies can help ensure each test focuses on one purpose
+
+remember, write test first to stay focused to the functionality. then write enough code
+to pass the test. then refactor.
+
+if you run `npm run test` it will run all test in the __tests__ folder.
+    to test a particular group of tests (Test Suite) can do the following examples
+        `npm run test Player`
+        `npm run test Potion`
+
+best practice is to have Constructors do as little work as possible
+
+SOLID is a mnemonic for 5 design principles intended to make OODesigns more 
+understandable, flexible, and maintainable.
+    Single Responsibility Principle: never be more than one reason for a class to change/ have more than 1 responsibility
+    Open-Closed Princible: software entities should be open for extension, but closed for modification
+    Liskov Substitution Principle: functions that use pointers/references to base classes must be able to use objects of derived classes without knowing it. ????????
+    Interface Segregation Principle: Clients should not be forced to depend on interfaces that they do not use
+    Dependency Inversion Principle: depend upon abstractions, not concretions
+
+in our game we are choosing to have a new Potion object within the Player() constructor
+    - not idea: but gives us the opportunity to learn how to properly test a function that is
+    dependant on another function
+    - a good test runs in isolation, so potion creation should be tested separately from Player
+        this way, if something breaks with the Potion() constructor, Player() remains unaffected
+
+keep mock data in ./lib/__mocks__
+    note: when mocking, Jest will always look for matching mock file in the same location
+    as the module being mocked (ex in this case, `lib/__mocks__/Potion.js) matches `lib/Potion.js`
+
+can mock data for anything! for example, mocking data for `fs`
+
+        const fs = require('fs');
+        jest.mock('fs');
+        fs.readFileSync.mockReturnValue('fake content');
+
+in this lesson, when defining methods using constructor functions, we have two solutions:
+1) with the use of `this`
+
+                                function Player(name = '') {
+                                    this.name = name;
+
+                                    this.health = Math.floor(Math.random() * 10 + 95);
+                                    this.strength = Math.floor(Math.random() * 5 + 7);
+                                    this.agility = Math.floor(Math.random() * 5 + 7);
+
+                                    this.inventory = [new Potion('health'), new Potion()];
+
+                                    // return object with various player properties
+                                    this.getStats = function() {
+                                        return {
+                                            potions: this.inventory.length,
+                                            health: this.health,
+                                            strength: this.strength,
+                                            agility: this.agility
+                                        };
+                                    };
+
+                                    // returns inventory array or false if empty
+                                    this.getInventory = function() {
+                                        if (this.inventory.length) {
+                                            return this.inventory
+                                        }
+                                        return false;
+                                    };
+                                }
+
+2) with the use of the `prototype` syntax
+
+                                function Player(name = '') {
+                                this.name = name;
+
+                                this.health = Math.floor(Math.random() * 10 + 95);
+                                this.strength = Math.floor(Math.random() * 5 + 7);
+                                this.agility = Math.floor(Math.random() * 5 + 7);
+
+                                this.inventory = [new Potion('health'), new Potion()];
+                                }
+
+                                Player.prototype.getStats = function() {
+                                return {
+                                    potions: this.inventory.length,
+                                    health: this.health,
+                                    strength: this.strength,
+                                    agility: this.agility
+                                };
+                                };
+
+                                Player.prototype.getInventory = function() {
+                                if (this.inventory.length) {
+                                    return this.inventory;
+                                }
+                                return false;
+                                };
+
+which method is better?
+    1) this.methodName may make more sense, but creates new methods for each new player.
+        so creating 100 players = 100 new getStats() methods
+    2) `prototype` creates a method once on the constructor
+        then new player objects inherit method from constructor instead of having their own method
+            inheritance can traverse multiple levels (so if method being called doesn't exist on
+            Player(), JS will look for it on the enxt constructor up the chain)
+            ex.
+            const player = new player ---> function Player() ---> function Object()
+                                                               getStats()                   toString()
+                                                               getInventory()
+            
+            player.toString() possible because of inheritence, even though object is two levels up
+                this is known as prototype chaining
+
+    careful with using arrow functions. they change the `this` keyword functionality. normally,
+    `this` would self-reference the Player object. `this` now refers to whatever it means in the
+    outer scope. In Node.js, the global `this` is just an empty object so properties become undefined
+    (another way to look at it: `this` gets changged to bind to the parent lexical scope
+        instead of the scope of the method)
+
+10.3
+- may have noticed that each test creates a new Player instance. Could use the same one in all tests,
+    but that could lead to unintended consequences. Since the tests affect Player object's
+    property values (ex. reducing health), then using the same object every time means
+    we won't be testing properties and methods in isolation anymore
