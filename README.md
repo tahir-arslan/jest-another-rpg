@@ -10,24 +10,21 @@ This application uses Node.,js, the Jest framework to run tests on the code, and
 ![Screenshot](/assets/images/screenshot.png)
 
 ## Table of Contents
-[Installation](#installation)
+1. [Installation](#installation)
+2. [Usage](#usage)
+3. [License(s)](#licenses)
+4. [Questions](#questions)
 
-[Usage](#usage)
-
-[License(s)](#licenses)
-
-[Questions](#questions)
-
-## Installation <a href="installation"></a>
+## Installation
 Clone the repo and open the project. In terminal, execute the command `npm i`. This will install all the dependencies required for this application to work.
 
-## Usage <a href="usage"></a>
+## Usage
 Once the dependancies are installed, you just need to execute `node app.js`, and the game will begin inside of the terminal.
 
-## License(s) <a href="licenses"></a>
+## License(s)
 MIT
 
-## Questions <a href = "questions"></a>
+## Questions
 My name is Arslan Tahir, the creator of this project. If you have any issues, comments, concerns, or questions regarding this project, feel free to contact me at tahir.arslan@gmail.com.
 
 If you would like to check out my other projects, feel free to explore my !(GitHub Page)[https://github.com/tahir-arslan/].
