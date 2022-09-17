@@ -11,8 +11,11 @@ This application uses Node.,js, the Jest framework to run tests on the code, and
 
 ## Table of Contents
 [Installation](#installation)
+
 [Usage](#usage)
+
 [License(s)](#licenses)
+
 [Questions](#questions)
 
 ## Installation <a href="installation"></a>
