@@ -184,3 +184,109 @@ an example of where arrow function is necessary: if the callback in `.initialize
 
 then function keyword would creaet a new lexical scope, and `.this` would no longer reference
 `Game` object. Therefore use arrow functions for all inquirer callbacks in this project!
+
+10.5
+Object.create() method
+    allows us to set up the inheritance between 'Player()'/'Enemy()' and 'Character()'
+
+4 principles of OOP:
+    Encapsulation
+        objects can privatize some data and only expose then through public methods like 'getName()'
+        meaning, object has private info not accessible to other objects, unless they call a Public method
+        to return that data
+
+                public class Employee {
+                    private int salary;
+
+                    public int getSalary() {
+                        return salary;
+                    }
+                }
+
+                in this case, `salary` is private unless we call the defined public function `getSalary()`
+    Inheritance
+        allows parent-child type relationship among classes
+    Abstraction
+        object methods are easy to use without needing to understand their code
+        (complex coding can be hidden behind easy to use interface)
+        ex: 'playGame()' does exactly what you'd expect without knowing about all the other methods
+            it might call internally
+    Polymorphism
+        object (and methods) can change depending on context
+            ex: 'Car' and 'Plane' objects might inherit from 'Vehicle' but their 'move()' methods are different
+        also known as Method Overloading, and represents a static form of Polymorphism
+            in javascript, this is usually done with a third parameter constructed as an object,
+            which can contain any number of { key: value } pairs (or can also contain an empty object)
+
+
+                        function doSomething(a, b, optionals) {
+                            if (optionals['test']) { }
+                        }
+
+                        doSomething(1, 2, {'method': 'subtract'});
+                        doSomething(3, 4, {'test': 'isEqual', 'foo': 'bar'});
+
+                        check if specific key inside object exists (in this case 'test'). if yes, then run 
+                        specific logic
+
+ES6 classes often called 'syntactic sugar' because they are still constructor functions in the backend,
+and use same prototypal inheritance. Just easier to read and write.
+    constructor functions can be written using `class` keyword
+
+                    ---------------------- vs ES6 constructor function  ----------------------
+                    class Car {
+                        constructor(make, model) {
+                            this.make = make;
+                            this.model = model;
+                        }
+
+                        honk() {
+                            console.log('beep beep');
+                        }
+                    }
+
+                    // car objects are still created and used the same way
+                    const car = new Car('Honda', 'Civic');
+                    car.honk();
+
+                    ---------------------- vs ES5 constructor function  ----------------------
+                    function Car(make, model) {
+                        this.make = make;
+                        this.model = model;
+                    }
+
+                    Car.prototype.honk = function() {
+                    console.log('beep bee');
+                    };
+
+                    const car = new Car('Honda', 'Civic');
+                    car.honk();
+
+how to have a new class inherit properties?
+        ex. class Doctor extends Person {}
+        doctor is inheriting properties of Person
+
+when running a test after including inheritance, may receive the following error:
+    Must call super constructor in derived class before accessing 'this'
+since player class has it's own constructor(), javascript wants to make sure the parent
+is properly initialized before Player starts assigning it's own properties (ex. 'this.inventory')
+        solution for this is to use the `super()` keyword to reference parent object
+
+property inheritance can still be achieved using ES5 syntax. using our lesson as an example:
+
+        In Character():
+            function Character(name = '') {
+                this.name = name;
+                this.health = Math.floor(Math.random() * 10 + 95);
+                this.strength = Math.floor(Math.random() * 5 + 7);
+                this.agility = Math.floor(Math.random() * 5 + 7);            
+            }
+
+        In Player():
+            function Player(name = '') {
+                Character.call(this, name);
+                this.inventory = [new Potion('health'), new Potion()];
+            }
+
+the reason why ES6 moved away from this is because compared to other programming languages,
+syntax can start to feel clunky
